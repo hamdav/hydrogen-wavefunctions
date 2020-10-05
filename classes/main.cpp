@@ -71,7 +71,7 @@ int main()
     };
     */
 
-    Plane plane1(0.7, 0.7, 1000, 1000);
+    Plane plane1(0.7, 0.7, 200, 200);
     float* vertices = plane1.getVertices();
     unsigned int* indices = plane1.getIndices();
 
@@ -107,7 +107,7 @@ int main()
 
 
     // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     float timeValue, greenValue;
     int vertexColorLocation;
@@ -117,7 +117,6 @@ int main()
     trans = glm::rotate(trans, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     glEnable(GL_DEPTH_TEST);
-
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
