@@ -1,10 +1,8 @@
-#include <cmath> //associated functions and stuff
-#include <complex>
-#include <iostream>
+
+#include "../headers/wavefunction.h"
 
 inline const double pi = 3.141592653589793;
 
-using complexd_t = std::complex<double>;
 
 // Returns the product of all integers 
 // between start and end inclusive.
@@ -47,14 +45,6 @@ void linspace(double start, double stop, int n, double* array){
         array[i] = start + i * step;
     }
 }
-
-struct Dims
-{
-    int r;
-    int theta;
-    int phi;
-};
-
 
 complexd_t* psi_arr(int n, int l, int m, Dims dims){
 
@@ -101,13 +91,4 @@ double *abs_psi_sq(int n, int l, int m, Dims dims){
     }
     delete[] psi;
     return abs_psi_squared;
-}
-
-
-int main(){
-
-    double *aps { abs_psi_sq(3, 2, 1, Dims{100, 100, 100}) };
-
-    delete[] aps;
-    return 0;
 }
