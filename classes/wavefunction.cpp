@@ -77,18 +77,71 @@ complexd_t* psi_arr(int n, int l, int m, Dims dims){
     return psi;
 }
 
-double *abs_psi_sq(int n, int l, int m, Dims dims){
+double *get_abs_psi_sq(int n, int l, int m, Dims dims){
     complexd_t *psi { psi_arr(n, l, m, dims) };
     int size { dims.phi * dims.theta * dims.r };
-    double *abs_psi_squared { new double[size] };
+    double *abs_psi_sq{ new double[size] };
 
     complexd_t *iterpsi {psi};
-    double *iterabs {abs_psi_squared};
+    double *iterabs {abs_psi_sq};
     for (int i{0}; i < size; i++){
         *iterabs = std::pow(std::abs(*iterpsi), 2);
         iterabs++;
         iterpsi++;
     }
     delete[] psi;
-    return abs_psi_squared;
+    return abs_psi_sq;
+}
+
+// populates three long array with spherical coordinate
+// representation of cartesian coordinates x, y, z
+// Does this in the order r, theta, phi
+// theta is polar angle and phi is azimuth.
+void spherical_from_cart(int x, int y, int z, double *arr){
+    using std::sqrt, std::pow, std::asin, std::atan2;
+    double r = sqrt(pow(x,2) + pow(y,2) + pow(z,2));
+    double rho = sqrt(pow(x,2) + pow(y,2));
+    double theta = z > 0 ? asin(rho / r) : pi - asin(rho / r);
+    double phi {atan2(x, y)};
+    if (phi < 0)
+        phi = phi + 2 * pi;
+    
+    *(arr) = r;
+    *(arr+1) = theta;
+    *(arr+2) = phi;
+}
+
+
+double *get_colors(int n, int l, int m, double phi_c, double theta_c, 
+               double xmin, double xmax, double ymin, double ymax,
+               int n_x, int n_y){
+    // n, l, m are the arguments for the wave function
+    // phi_c and theta_c are the azimuth and polar angle that the 
+    // camera is pointing in
+    using std::sin, std::cos, std::real, std::imag;
+    int size {n_x * n_y * 4};
+    double deltax = (xmax - xmin)/n_x;
+    double deltay = (ymax - ymin)/n_y;
+
+    double *colors { new double[size] };
+    double *itercol {colors};
+    for (int i; i < size/4; i++){
+        // Calculate x and y
+        double x_p = xmin + deltax * (int)(i / n_y);
+        double y_p = ymin + deltay * (i % n_y);
+        // Calculate r, theta and phi
+        double x = x_p * sin(phi_c) - y_p * cos(phi_c) * cos(theta_c);
+        double y = - x_p * cos(phi_c) - y_p * sin(phi_c) * cos(theta_c);
+        double z = y_p * sin(theta_c);
+        double sph_coord[3];
+        spherical_from_cart(x, y, z, sph_coord);
+
+        complexd_t psi = psi_nlm(n, l, m, sph_coord[0],
+                                 sph_coord[1], sph_coord[2]);
+        *(itercol++) = real(psi);
+        *(itercol++) = 0.0;
+        *(itercol++) = imag(psi);
+        *(itercol++) = 1.0;
+    }
+    return colors;    
 }
