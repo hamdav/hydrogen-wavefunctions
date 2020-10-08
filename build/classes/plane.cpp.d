@@ -139,7 +139,8 @@ build/./classes/plane.cpp.o: classes/plane.cpp classes/../headers/plane.h \
  classes/../headers/./glm/detail/type_half.hpp \
  classes/../headers/./glm/detail/type_half.inl \
  classes/../headers/./glm/integer.hpp \
- classes/../headers/./glm/detail/func_integer.inl
+ classes/../headers/./glm/detail/func_integer.inl \
+ classes/../headers/./wavefunction.h
 classes/../headers/plane.h:
 classes/../headers/./glm/glm.hpp:
 classes/../headers/./glm/detail/_fixes.hpp:
@@ -282,3 +283,4 @@ classes/../headers/./glm/detail/type_half.hpp:
 classes/../headers/./glm/detail/type_half.inl:
 classes/../headers/./glm/integer.hpp:
 classes/../headers/./glm/detail/func_integer.inl:
+classes/../headers/./wavefunction.h:

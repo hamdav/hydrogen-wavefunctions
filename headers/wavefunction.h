@@ -20,3 +20,4 @@ complexd_t psi_nlm(int n, int l, int m, double r, double theta, double phi);
 void linspace(double start, double stop, int n, double* array);
 complexd_t* psi_arr(int n, int l, int m, Dims dims);
 double *abs_psi_sq(int n, int l, int m, Dims dims);
+double *get_colors(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, int n_x, int n_y);

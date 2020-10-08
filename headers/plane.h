@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "./glm/glm.hpp"
+#include "./wavefunction.h"
 
 class Plane {
 public:

@@ -191,7 +191,7 @@ build/./classes/main.cpp.o: classes/main.cpp classes/../headers/glad.h \
  classes/../headers/glm/gtc/../gtc/../ext/vector_uint1_sized.hpp \
  classes/../headers/glm/gtc/type_ptr.inl classes/../headers/shader.h \
  classes/../headers/./glad.h classes/../headers/plane.h \
- classes/../headers/wavefunction.h
+ classes/../headers/./wavefunction.h
 classes/../headers/glad.h:
 lib/KHR/khrplatform.h:
 classes/../headers/glm/glm.hpp:
@@ -389,4 +389,4 @@ classes/../headers/glm/gtc/type_ptr.inl:
 classes/../headers/shader.h:
 classes/../headers/./glad.h:
 classes/../headers/plane.h:
-classes/../headers/wavefunction.h:
+classes/../headers/./wavefunction.h:

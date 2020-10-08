@@ -71,7 +71,7 @@ int main()
     };
     */
 
-    Plane plane1(0.7, 0.7, 200, 200);
+    Plane plane1(0.7, 0.7, 50, 50);
     float* vertices = plane1.getVertices();
     unsigned int* indices = plane1.getIndices();
 
@@ -114,7 +114,7 @@ int main()
 
     glm::mat4 trans(1.0f);
     //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 1.0));
-    trans = glm::rotate(trans, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    //trans = glm::rotate(trans, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     glEnable(GL_DEPTH_TEST);
     // render loop
@@ -134,10 +134,9 @@ int main()
         mainShader.use();
 
         timeValue = glfwGetTime();
-        std::cout << "Time " << timeValue << std::endl;
         greenValue = (sin(timeValue));
         mainShader.setFloat("greenColor", greenValue);
-        mainShader.setMat4("transform", glm::rotate(trans, glm::radians(greenValue * 90), glm::vec3(0.0, 0.0, 1.0)));
+        mainShader.setMat4("transform", trans);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         //glDrawArrays(GL_TRIANGLES, 0, 6);
