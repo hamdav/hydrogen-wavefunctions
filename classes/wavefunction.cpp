@@ -27,7 +27,7 @@ complexd_t Rnl(int n, int l, double r){
     double a = 0.529e-10;
     complexd_t c = std::sqrt(std::pow(2 / (n * a), 3)
             / (prod(n-l, n+l) * (2 * n)))
-            * std::polar(1.0, -r / (n*a))
+            * std::exp( -r / (n*a))
             * std::pow(2*r/(n*a), l)
             * std::assoc_laguerre(n-l-1, 2*l+1, 2*r/(n*a));
     return c;

@@ -33,7 +33,7 @@ size_t Plane::indicesSize() {
 void Plane::generateVertices() {
     vertices.resize(tileW*tileH*3*2);
 
-    double* colors = get_colors(4, 3, 0, 0, glm::radians(45.0f), -1e-10, 1e-10, -1e-10, 1e-10, tileW, tileH);
+    double* colors = get_colors(4, 3, 0, 0, glm::radians(45.0f), -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
     for ( int i = 0; i < tileW*tileH*4; i++ ) {
         std::cout << colors[i] << std::endl;
     }
