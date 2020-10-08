@@ -97,7 +97,7 @@ double *get_abs_psi_sq(int n, int l, int m, Dims dims){
 // representation of cartesian coordinates x, y, z
 // Does this in the order r, theta, phi
 // theta is polar angle and phi is azimuth.
-void spherical_from_cart(int x, int y, int z, double *arr){
+void spherical_from_cart(double x, double y, double z, double *arr){
     using std::sqrt, std::pow, std::asin, std::atan2;
     double r = sqrt(pow(x,2) + pow(y,2) + pow(z,2));
     double rho = sqrt(pow(x,2) + pow(y,2));
@@ -127,7 +127,7 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
     double *colors { new double[size] };
     double *itercol {colors};
     double maximum_psi{0};
-    for (int i; i < size/4; i++){
+    for (int i{0}; i < size/4; i++){
         // Calculate x and y
         double x_p = xmin + deltax * (int)(i / n_y);
         double y_p = ymin + deltay * (i % n_y);
@@ -153,7 +153,7 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
     if (maximum_psi == 0)
         return colors;
     itercol = colors;
-    for (int i; i < size/4; i++){
+    for (int i{0}; i < size/4; i++){
         *(itercol++) /= maximum_psi;
         itercol++;
         *(itercol++) /= maximum_psi;
