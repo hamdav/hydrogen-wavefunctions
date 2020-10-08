@@ -34,10 +34,7 @@ void Plane::generateVertices() {
     vertices.resize(tileW*tileH*3*2);
 
     double* colors = get_colors(4, 3, 0, 0, glm::radians(45.0f), -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
-    for ( int i = 0; i < tileW*tileH*4; i++ ) {
-        std::cout << colors[i] << std::endl;
-    }
-
+    
     float xGap = ((float) width)/((float) tileW);
     float yGap = ((float) height)/((float) tileH);
 
@@ -49,7 +46,6 @@ void Plane::generateVertices() {
             vertices[y*tileW*6 + x + 3] = (float)colors[y*tileW*4 + x/6*4];
             vertices[y*tileW*6 + x + 4] = (float)colors[y*tileW*4 + x/6*4 + 1];
             vertices[y*tileW*6 + x + 5] = (float)colors[y*tileW*4 + x/6*4 + 2];
-            std::cout << (float)colors[y*tileW*4 + x/6*4] << (float)colors[y*tileW*4 + x/6*4 + 1] << (float)colors[y*tileW*4 + x/6*4 + 2] << std::endl;
         }
     }
 

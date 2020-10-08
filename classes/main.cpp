@@ -71,7 +71,7 @@ int main()
     };
     */
 
-    Plane plane1(0.7, 0.7, 50, 50);
+    Plane plane1(0.7, 0.7, 150, 150);
     float* vertices = plane1.getVertices();
     unsigned int* indices = plane1.getIndices();
 
