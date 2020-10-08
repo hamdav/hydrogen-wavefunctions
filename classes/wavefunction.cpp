@@ -118,13 +118,15 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
     // n, l, m are the arguments for the wave function
     // phi_c and theta_c are the azimuth and polar angle that the 
     // camera is pointing in
-    using std::sin, std::cos, std::real, std::imag;
+    using std::sin, std::cos, std::real, std::imag, std::abs;
     int size {n_x * n_y * 4};
     double deltax = (xmax - xmin)/n_x;
     double deltay = (ymax - ymin)/n_y;
 
+
     double *colors { new double[size] };
     double *itercol {colors};
+    double maximum_psi{0};
     for (int i; i < size/4; i++){
         // Calculate x and y
         double x_p = xmin + deltax * (int)(i / n_y);
@@ -138,10 +140,25 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
 
         complexd_t psi = psi_nlm(n, l, m, sph_coord[0],
                                  sph_coord[1], sph_coord[2]);
-        *(itercol++) = real(psi);
+        *(itercol++) = abs(real(psi));
         *(itercol++) = 0.0;
-        *(itercol++) = imag(psi);
+        *(itercol++) = abs(imag(psi));
         *(itercol++) = 1.0;
+
+        if (abs(real(psi)) > maximum_psi)
+            maximum_psi = abs(real(psi));
+        if (abs(imag(psi)) > maximum_psi)
+            maximum_psi = abs(imag(psi));
     }
+    if (maximum_psi == 0)
+        return colors;
+    itercol = colors;
+    for (int i; i < size/4; i++){
+        *(itercol++) /= maximum_psi;
+        itercol++;
+        *(itercol++) /= maximum_psi;
+        itercol++;
+    }
+
     return colors;    
 }
