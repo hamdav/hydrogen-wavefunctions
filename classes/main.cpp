@@ -155,14 +155,24 @@ int main()
         // input
         // -----
         processInput(window);
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            phi += 0.01;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            phi -= 0.01;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            theta += 0.01;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            theta -= 0.01;
+        }
 
         // update state
         plane1.updateColors(theta,phi);
         vertices = plane1.getVertices();
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), vertices, GL_STATIC_DRAW);
-        phi += 0.01;
-        theta += 0.02;
 
         // render
         // ------
