@@ -17,6 +17,8 @@ public:
     size_t verticesSize();
     size_t indicesSize();
 
+    void updateColors(double phi, double theta);
+
 private:
     float width;
     float height;

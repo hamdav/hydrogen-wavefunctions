@@ -30,6 +30,20 @@ size_t Plane::indicesSize() {
     return indices.size() * sizeof(unsigned int);
 }
 
+void Plane::updateColors(double phi, double theta) {
+    double* colors = get_colors(4, 3, 0, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
+
+    for ( int y = 0; y < tileH; y++ ) {
+        for ( int x = 0; x < tileW * 6; x += 6 ) {
+            vertices[y*tileW*6 + x + 3] = (float)colors[y*tileW*4 + x/6*4];
+            vertices[y*tileW*6 + x + 4] = (float)colors[y*tileW*4 + x/6*4 + 1];
+            vertices[y*tileW*6 + x + 5] = (float)colors[y*tileW*4 + x/6*4 + 2];
+        }
+    }
+
+    delete colors;
+}
+
 void Plane::generateVertices() {
     vertices.resize(tileW*tileH*3*2);
 
@@ -48,6 +62,8 @@ void Plane::generateVertices() {
             vertices[y*tileW*6 + x + 5] = (float)colors[y*tileW*4 + x/6*4 + 2];
         }
     }
+
+    delete colors;
 
 }
 
@@ -70,3 +86,4 @@ void Plane::generateIndices() {
         }
     }
 }
+

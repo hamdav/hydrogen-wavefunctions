@@ -119,11 +119,28 @@ int main()
     glEnable(GL_DEPTH_TEST);
     // render loop
     // -----------
+
+    // ms counting
+    double lastTime = glfwGetTime();
+    double currentTime = glfwGetTime();
+    int frameDiff = 0;
+
+    glfwSwapInterval(0);
+
+    double theta = 0;
+    double phi = 0;
     while (!glfwWindowShouldClose(window))
     {
         // input
         // -----
         processInput(window);
+
+        // update state
+        plane1.updateColors(theta,phi);
+        vertices = plane1.getVertices();
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), vertices, GL_STATIC_DRAW);
+        theta += 0.01;
 
         // render
         // ------
@@ -147,6 +164,14 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        currentTime = glfwGetTime();
+        frameDiff++;
+        if ( currentTime - lastTime >= 1.0 ) {
+            printf("%f ms\n", 1000.0/((double)(frameDiff)));
+            frameDiff = 0;
+            lastTime += 1.0;
+        }
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
