@@ -58,18 +58,37 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    /*
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f,  1.0, 0.0f, 0.0f, // top right
-         0.5f, -0.5f, 0.0f,  0.0, 1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0, 0.0f, 1.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,  1.0, 1.0f, 1.0f, // top left 
+    float vertices1[] = {
+         0.0f,  0.0f, 0.0f,  1.0, 1.0f, 1.0f, // origin
+         0.5f,  0.0f, 0.0f,  1.0, 0.0f, 0.0f, // x
+         0.0f,  0.5f, 0.0f,  0.0, 1.0f, 0.0f, // y
+         0.0f,  0.0f, 0.5f,  0.0, 0.0f, 1.0f, // z
     };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
+    unsigned int indices1[] = {  // note that we start from 0!
+        0, 1, 2,  // x y
+        0, 1, 3,  // x z
+        0, 2, 3,  // y z
+        1, 2, 3,
     };
-    */
+
+    unsigned int tVBO, tVAO, tEBO;
+    glGenVertexArrays(1, &tVAO);
+    glGenBuffers(1, &tVBO);
+    glGenBuffers(1, &tEBO);
+
+    glBindVertexArray(tVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, tVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     Plane plane1(0.7, 0.7, 150, 150);
     float* vertices = plane1.getVertices();
@@ -107,16 +126,18 @@ int main()
 
 
     // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     float timeValue, greenValue;
     int vertexColorLocation;
 
     glm::mat4 trans(1.0f);
-    //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 1.0));
-    //trans = glm::rotate(trans, glm::radians(70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 axesTrans(1.0f);
+    axesTrans = glm::scale(axesTrans, glm::vec3(0.5, 0.5, 0.5));
+    glm::mat4 tmpTrans;
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // render loop
     // -----------
 
@@ -140,11 +161,12 @@ int main()
         vertices = plane1.getVertices();
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), vertices, GL_STATIC_DRAW);
-        theta += 0.01;
+        phi += 0.01;
+        theta += 0.02;
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw our first triangle
@@ -152,12 +174,22 @@ int main()
 
         timeValue = glfwGetTime();
         greenValue = (sin(timeValue));
-        mainShader.setFloat("greenColor", greenValue);
+        //mainShader.setFloat("alpha", 1.0);
         mainShader.setMat4("transform", trans);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawElements(GL_TRIANGLES, plane1.indicesSize() / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(tVAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        tmpTrans = glm::translate(axesTrans, glm::vec3(1.2, 0.0, 0.0));
+        tmpTrans = glm::rotate(tmpTrans, (float) phi, glm::vec3(1.0, 0.0, 0.0));
+        tmpTrans = glm::rotate(tmpTrans, (float) -theta, glm::vec3(0.0, 0.0, 1.0));
+        mainShader.setMat4("transform", tmpTrans);
+        mainShader.setFloat("alpha", 1);
+        
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
         // glBindVertexArray(0); // no need to unbind it every time 
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
