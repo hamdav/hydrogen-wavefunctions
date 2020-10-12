@@ -19,7 +19,7 @@ int prod(int start, int end){
 complexd_t Ylm(int l, int m, double theta, double phi){
     complexd_t y = std::sqrt((2 * l + 1) / (4 * pi * prod(l-m+1, l+m)))
         * std::polar(1.0, m * phi)
-        * std::assoc_legendre(l, m, std::cos(phi));
+        * std::assoc_legendre(l, m, std::cos(theta));
     return y;
 }
 
