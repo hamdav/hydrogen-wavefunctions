@@ -3,6 +3,7 @@
 #include <cmath> //associated functions and stuff
 #include <complex>
 #include <iostream>
+#include <numeric>
 
 using complexd_t = std::complex<double>;
 
@@ -21,3 +22,4 @@ void linspace(double start, double stop, int n, double* array);
 complexd_t* psi_arr(int n, int l, int m, Dims dims);
 double *abs_psi_sq(int n, int l, int m, Dims dims);
 double *get_colors(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, int n_x, int n_y);
+double *get_colors2_electric_boogaloo(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, double zmax, int n_x, int n_y, int n_z);
