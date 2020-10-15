@@ -31,7 +31,7 @@ size_t Plane::indicesSize() {
 }
 
 void Plane::updateColors(double phi, double theta) {
-    double* colors = get_colors(4, 3, 0, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
+    double* colors = get_colors(4, 3, 1, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
 
     for ( int y = 0; y < tileH; y++ ) {
         for ( int x = 0; x < tileW * 6; x += 6 ) {
@@ -47,7 +47,7 @@ void Plane::updateColors(double phi, double theta) {
 void Plane::generateVertices() {
     vertices.resize(tileW*tileH*3*2);
 
-    double* colors = get_colors(4, 3, 0, 0, glm::radians(45.0f), -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
+    double* colors = get_colors(4, 3, 1, 0, glm::radians(45.0f), -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
     
     float xGap = ((float) width)/((float) tileW);
     float yGap = ((float) height)/((float) tileH);
