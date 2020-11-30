@@ -196,7 +196,7 @@ double *get_colors2_electric_boogaloo(int n, int l, int m, double phi_c, double 
     // n_z is the number of points to take into account on either side of the plane
     // zmax is the length on either side taken into account
     //
-    using std::sin, std::cos, std::real, std::imag, std::abs, std::inner_product;
+    using std::sin, std::cos, std::real, std::imag, std::complex, std::abs, std::inner_product;
     int size {n_x * n_y * 4};
     double deltax = (xmax - xmin)/n_x;
     double deltay = (ymax - ymin)/n_y;
@@ -217,38 +217,40 @@ double *get_colors2_electric_boogaloo(int n, int l, int m, double phi_c, double 
     double *itercol {colors};
     double maximum_psi{0};
     for (int i{0}; i < size/4; i++){
+        complexd_t cum_psi{0};
         // Calculate x and y
         double x_p = xmin + deltax * (int)(i / n_y);
         double y_p = ymin + deltay * (i % n_y);
-        // Calculate r, theta and phi
-        //double x = x_p * sin(phi_c) - y_p * cos(phi_c) * cos(theta_c);
-        //double y = - x_p * cos(phi_c) - y_p * sin(phi_c) * cos(theta_c);
-        //double z = y_p * sin(theta_c);
-        double p_coord[3] { x_p, y_p, 0 };
-        double car_coord[3];
-        convert_to_basis(p_coord, unit_xp, unit_yp, unit_zp, car_coord);
-        double sph_coord[3];
-        spherical_from_cart(car_coord, sph_coord);
+        for (int j{0}; j < n_z; j++){
+            double z_p = - zmax + deltaz * j;
+            
+            // Calculate r, theta and phi
+            double p_coord[3] { x_p, y_p, z_p };
+            double car_coord[3];
+            convert_to_basis(p_coord, unit_xp, unit_yp, unit_zp, car_coord);
+            double sph_coord[3];
+            spherical_from_cart(car_coord, sph_coord);
 
-        complexd_t psi = psi_nlm(n, l, m, sph_coord[0],
-                                 sph_coord[1], sph_coord[2]);
-        *(itercol++) = abs(real(psi));
+            cum_psi += psi_nlm(n, l, m, sph_coord[0], sph_coord[1], sph_coord[2]);
+        }
+        complexd_t avg_psi {cum_psi / complex<double>(n_z, 0)};
+        *(itercol++) = abs(real(avg_psi));
         *(itercol++) = 0.0;
-        *(itercol++) = abs(imag(psi));
+        *(itercol++) = abs(imag(avg_psi));
         *(itercol++) = 1.0;
 
-        if (abs(real(psi)) > maximum_psi)
-            maximum_psi = abs(real(psi));
-        if (abs(imag(psi)) > maximum_psi)
-            maximum_psi = abs(imag(psi));
+        if (abs(real(avg_psi)) > maximum_psi)
+            maximum_psi = abs(real(avg_psi));
+        if (abs(imag(avg_psi)) > maximum_psi)
+            maximum_psi = abs(imag(avg_psi));
     }
     if (maximum_psi == 0)
         return colors;
     itercol = colors;
     for (int i{0}; i < size/4; i++){
-        *(itercol++) /= maximum_psi;
+        *(itercol++) /= 5e12; //maximum_psi;
         itercol++;
-        *(itercol++) /= maximum_psi;
+        *(itercol++) /= 5e12; //maximum_psi;
         itercol++;
     }
 

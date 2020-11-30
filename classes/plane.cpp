@@ -32,7 +32,7 @@ size_t Plane::indicesSize() {
 
 void Plane::updateColors(double phi, double theta) {
     //double* colors = get_colors(4, 3, 1, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
-    double* colors = get_colors2_electric_boogaloo(4, 3, 1, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, 1, tileW, tileH, 1);
+    double* colors = get_colors2_electric_boogaloo(4, 1, 0, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, 3e-9, tileW, tileH, 40);
 
     for ( int y = 0; y < tileH; y++ ) {
         for ( int x = 0; x < tileW * 6; x += 6 ) {
