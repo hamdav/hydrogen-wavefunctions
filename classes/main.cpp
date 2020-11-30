@@ -90,7 +90,7 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    Plane plane1(0.7, 0.7, 40, 40);
+    Plane plane1(0.7, 0.7, 150, 150);
     float* vertices = plane1.getVertices();
     unsigned int* indices = plane1.getIndices();
 

@@ -122,6 +122,16 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
     double deltax = (xmax - xmin)/n_x;
     double deltay = (ymax - ymin)/n_y;
 
+    // Basis vectors for the plane (in normal cartesian coords)
+    double unit_xp[3] {cos(phi_c)*cos(theta_c),
+                      sin(phi_c)*cos(theta_c), 
+                     -sin(theta_c)};
+    double unit_yp[3] {-sin(phi_c),
+                      cos(phi_c),
+                      0};
+    double unit_zp[3] {cos(phi_c)*sin(theta_c),
+                      sin(phi_c)*sin(theta_c),
+                      cos(theta_c)};
 
     double *colors { new double[size] };
     double *itercol {colors};
@@ -131,9 +141,9 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
         double x_p = xmin + deltax * (int)(i / n_y);
         double y_p = ymin + deltay * (i % n_y);
         // Calculate r, theta and phi
-        double car_coord[3] {-x_p * sin(phi_c) - y_p * cos(phi_c) * cos(theta_c),
-                          x_p * cos(phi_c) + y_p * sin(phi_c) * cos(theta_c),
-                          y_p * sin(theta_c)};
+        double p_coord[3] { x_p, y_p, 0 };
+        double car_coord[3];
+        convert_to_basis(p_coord, unit_xp, unit_yp, unit_zp, car_coord);
         double sph_coord[3];
         spherical_from_cart(car_coord, sph_coord);
 
