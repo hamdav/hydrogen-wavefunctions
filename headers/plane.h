@@ -17,6 +17,16 @@ public:
     size_t verticesSize();
     size_t indicesSize();
 
+    void increment_n();
+    void increment_l();
+    void increment_m();
+    void decrement_n();
+    void decrement_l();
+    void decrement_m();
+
+    void zoomIn();
+    void zoomOut();
+
     void updateColors(double phi, double theta);
 
 private:
@@ -24,6 +34,11 @@ private:
     float height;
     int tileW;
     int tileH;
+    int n;
+    int l;
+    int m;
+    float awidth;
+    float aheight;
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;

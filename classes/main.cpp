@@ -150,6 +150,9 @@ int main()
 
     double theta = 0;
     double phi = 0;
+    bool nWasPressed = false;
+    bool lWasPressed = false;
+    bool mWasPressed = false;
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -167,6 +170,46 @@ int main()
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             theta -= 0.01;
         }
+        // Increment n/l/m when n/l/m is pressed
+        
+        if (!nWasPressed && glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) 
+                plane1.decrement_n();
+            else
+                plane1.increment_n();
+            nWasPressed = true;
+        }
+        if (nWasPressed && glfwGetKey(window, GLFW_KEY_N) == GLFW_RELEASE) {
+            nWasPressed = false;
+        }
+
+        if (!lWasPressed && glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) 
+                plane1.decrement_l();
+            else
+                plane1.increment_l();
+            lWasPressed = true;
+        }
+        if (lWasPressed && glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE) {
+            lWasPressed = false;
+        }
+        if (!mWasPressed && glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) 
+                plane1.decrement_m();
+            else
+                plane1.increment_m();
+            mWasPressed = true;
+        }
+        if (mWasPressed && glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE) {
+            mWasPressed = false;
+        }
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+            plane1.zoomIn();
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+            plane1.zoomOut();
+        }
+
 
         // update state
         plane1.updateColors(theta,phi);

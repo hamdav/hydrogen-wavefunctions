@@ -6,6 +6,11 @@ Plane::Plane(float width, float height, int tileW, int tileH) {
     this->height = height;
     this->tileW = tileW;
     this->tileH = tileH;
+    this->n = 1;
+    this->l = 0;
+    this->m = 0;
+    this->awidth = 6e-9;
+    this->aheight = 6e-9;
 
     generateVertices();
     generateIndices();
@@ -30,9 +35,53 @@ size_t Plane::indicesSize() {
     return indices.size() * sizeof(unsigned int);
 }
 
+void Plane::increment_n() {
+    n++;
+}
+void Plane::increment_l() {
+    if (l < n-1)
+        l++;
+}
+void Plane::increment_m() {
+    if (m < l)
+        m++;
+}
+void Plane::decrement_n() {
+    if (n > 1){
+        n--;
+        if (l > n-1){
+            decrement_l();
+        }
+    }
+}
+void Plane::decrement_l() {
+    if (l > 0){
+        if (m == l){
+            decrement_m();
+        }
+        else if (m == -l){
+            increment_m();
+        }
+        l--;
+    }
+}
+void Plane::decrement_m() {
+    if (m > -l)
+        m--;
+}
+void Plane::zoomIn() {
+    awidth *= 0.99;
+    aheight *= 0.99;
+}
+void Plane::zoomOut() {
+    awidth *= 1.01;
+    aheight *= 1.01;
+}
+
 void Plane::updateColors(double phi, double theta) {
-    double* colors = get_colors(4, 3, 1, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, tileW, tileH);
-    //double* colors = get_colors2_electric_boogaloo(4, 1, 0, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, 3e-9, tileW, tileH, 40);
+    double* colors = get_colors(n, l, m, phi, theta,
+                            -awidth/2, awidth/2, -aheight/2, aheight/2, tileW, tileH);
+    //double* colors = get_colors2_electric_boogaloo(n, l, m, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, 3e-9, tileW, tileH, 40);
 
     for ( int y = 0; y < tileH; y++ ) {
         for ( int x = 0; x < tileW * 6; x += 6 ) {
@@ -65,7 +114,6 @@ void Plane::generateVertices() {
     }
 
     delete colors;
-
 }
 
 void Plane::generateIndices() {
