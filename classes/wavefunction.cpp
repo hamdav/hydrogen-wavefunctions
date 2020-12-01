@@ -118,6 +118,14 @@ void spherical_from_cart(double cart[3], double *sph){
     sph[2] = phi;
 }
 
+void complex_to_color(complexd_t c, double *col_arr){
+    using std::abs, std::arg, std::sin, std::cos, std::pow;
+    col_arr[0] = abs(c) * pow(sin(arg(c)/2), 2);
+    col_arr[1] = abs(c) * pow(sin(arg(c)/2 + pi/3), 2);
+    col_arr[2] = abs(c) * pow(sin(arg(c)/2 + 2*pi/3), 2);
+}
+
+
 
 double *get_colors(int n, int l, int m, double phi_c, double theta_c, 
                double xmin, double xmax, double ymin, double ymax,
@@ -157,22 +165,24 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
 
         complexd_t psi = psi_nlm(n, l, m, sph_coord[0],
                                  sph_coord[1], sph_coord[2]);
-        *(itercol++) = abs(real(psi));
-        *(itercol++) = 0.0;
-        *(itercol++) = abs(imag(psi));
+        double col[3];
+        complex_to_color(psi, col);
+        *(itercol++) = col[0];
+        *(itercol++) = col[1];
+        *(itercol++) = col[2];
         *(itercol++) = 1.0;
 
-        if (abs(real(psi)) > maximum_psi)
-            maximum_psi = abs(real(psi));
-        if (abs(imag(psi)) > maximum_psi)
-            maximum_psi = abs(imag(psi));
+        if (abs(psi) > maximum_psi)
+            maximum_psi = abs(psi);
     }
     if (maximum_psi == 0)
         return colors;
+    //std::cout << maximum_psi << std::endl;
+    maximum_psi = 1e15;
     itercol = colors;
     for (int i{0}; i < size/4; i++){
         *(itercol++) /= maximum_psi;
-        itercol++;
+        *(itercol++) /= maximum_psi;
         *(itercol++) /= maximum_psi;
         itercol++;
     }
