@@ -1,35 +1,43 @@
-
 #include "../headers/wavefunction.h"
 
 inline const double pi = 3.141592653589793;
 
 
-// Returns the product of all integers 
-// between start and end inclusive.
-// If start > end it returns 1
-int prod(int start, int end){
-    int cumulative_product{1};
-    for (int n = start; n <= end; n++){
-        cumulative_product *= n;
-    }
-    return cumulative_product;
+// Returns (i + j)!/(i - j)!
+// assumes that i > abs(j)
+double fracfac(int l, int m){
+    int lo = m >= 0 ? l-m : l+m;
+    int hi = m >= 0 ? l+m : l-m;
+    double p {prod(lo+1, hi)};
+    return m >= 0 ? p : 1/p;
+}
+
+// Returns the product i * (i+1) * (i+2) * ... * j
+// If i > j returns 1
+int prod(int i, int j){
+    int cumProd{1};
+    for (int n = i; n <= j; n++)
+        cumProd *= n;
+    return cumProd;
 }
 
 // Convention: theta is polar angle and phi is azimuthal. 
 complexd_t Ylm(int l, int m, double theta, double phi){
-    complexd_t y = std::sqrt((2 * l + 1) / (4 * pi * prod(l-m+1, l+m)))
-        * std::polar(1.0, m * phi)
-        * std::assoc_legendre(l, m, std::cos(theta));
+    using std::sqrt, std::abs, std::polar, std::assoc_legendre, std::cos;
+    complexd_t y = sqrt((2 * l + 1) / (4 * pi * fracfac(l, abs(m))))
+            * polar(1.0, m * phi)
+            * assoc_legendre(l, abs(m), cos(theta));
     return y;
 }
 
 complexd_t Rnl(int n, int l, double r){
+    using std::sqrt, std::pow, std::exp, std::assoc_laguerre;
     double a = 0.529e-10;
-    complexd_t c = std::sqrt(std::pow(2 / (n * a), 3)
-            / (prod(n-l, n+l) * (2 * n)))
-            * std::exp( -r / (n*a))
-            * std::pow(2*r/(n*a), l)
-            * std::assoc_laguerre(n-l-1, 2*l+1, 2*r/(n*a));
+    complexd_t c = sqrt(pow(2 / (n * a), 3)
+            * fracfac(n, l) / ((n-l) * (2 * n)))
+            * exp( -r / (n*a))
+            * pow(2*r/(n*a), l)
+            * assoc_laguerre(n-l-1, 2*l+1, 2*r/(n*a));
     return c;
 }
 

@@ -14,7 +14,8 @@ struct Dims
     int phi;
 };
 
-int prod(int start, int end);
+double fracfac(int i, int j);
+int prod(int i, int j);
 complexd_t Ylm(int l, int m, double theta, double phi);
 complexd_t Rnl(int n, int l, double r);
 complexd_t psi_nlm(int n, int l, int m, double r, double theta, double phi);
