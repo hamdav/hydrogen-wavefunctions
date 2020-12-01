@@ -177,8 +177,7 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
     }
     if (maximum_psi == 0)
         return colors;
-    //std::cout << maximum_psi << std::endl;
-    maximum_psi = 1e15;
+    //maximum_psi = 1e15;
     itercol = colors;
     for (int i{0}; i < size/4; i++){
         *(itercol++) /= maximum_psi;
