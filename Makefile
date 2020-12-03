@@ -10,8 +10,8 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -g -std=c++17 -O2
-LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -g -std=c++17 -O2 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include 
+LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lfreetype
 CC = g++
 CXX = g++
 
