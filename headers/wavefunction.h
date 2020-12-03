@@ -23,5 +23,5 @@ void linspace(double start, double stop, int n, double* array);
 complexd_t* psi_arr(int n, int l, int m, Dims dims);
 double *abs_psi_sq(int n, int l, int m, Dims dims);
 void convert_to_basis(double v[3], double e1[3], double e2[3], double e3[3], double res[3]);
-double *get_colors(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, int n_x, int n_y);
+double *get_colors(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, int n_x, int n_y, double normalization_const=1e15);
 double *get_colors2_electric_boogaloo(int n, int l, int m, double phi_c, double theta_c, double xmin, double xmax, double ymin, double ymax, double zmax, int n_x, int n_y, int n_z);

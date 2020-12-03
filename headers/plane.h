@@ -27,6 +27,9 @@ public:
     void zoomIn();
     void zoomOut();
 
+    void incSensitivity();
+    void decSensitivity();
+
     void updateColors(double phi, double theta);
 
 private:
@@ -39,6 +42,7 @@ private:
     int m;
     float awidth;
     float aheight;
+    double norm_const;
 
     std::vector<float> vertices;
     std::vector<unsigned int> indices;

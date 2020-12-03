@@ -43,6 +43,7 @@ complexd_t Rnl(int n, int l, double r){
 
 complexd_t psi_nlm(int n, int l, int m, double r, double theta, double phi){
     return Rnl(n, l, r) * Ylm(l, m, theta, phi);
+    //return Ylm(l, m, theta, phi);
 }
 
 // Endpoint exclusive
@@ -129,7 +130,7 @@ void complex_to_color(complexd_t c, double *col_arr){
 
 double *get_colors(int n, int l, int m, double phi_c, double theta_c, 
                double xmin, double xmax, double ymin, double ymax,
-               int n_x, int n_y){
+               int n_x, int n_y, double normalization_const){
     // n, l, m are the arguments for the wave function
     // phi_c and theta_c are the azimuth and polar angle that the 
     // camera is pointing in
@@ -175,14 +176,11 @@ double *get_colors(int n, int l, int m, double phi_c, double theta_c,
         if (abs(psi) > maximum_psi)
             maximum_psi = abs(psi);
     }
-    if (maximum_psi == 0)
-        return colors;
-    //maximum_psi = 1e15;
     itercol = colors;
     for (int i{0}; i < size/4; i++){
-        *(itercol++) /= maximum_psi;
-        *(itercol++) /= maximum_psi;
-        *(itercol++) /= maximum_psi;
+        *(itercol++) /= normalization_const;
+        *(itercol++) /= normalization_const;
+        *(itercol++) /= normalization_const;
         itercol++;
     }
 

@@ -11,6 +11,7 @@ Plane::Plane(float width, float height, int tileW, int tileH) {
     this->m = 0;
     this->awidth = 6e-9;
     this->aheight = 6e-9;
+    this->norm_const = 1e15;
 
     generateVertices();
     generateIndices();
@@ -69,6 +70,12 @@ void Plane::decrement_m() {
     if (m > -l)
         m--;
 }
+void Plane::incSensitivity() {
+    norm_const *= 0.99;
+}
+void Plane::decSensitivity() {
+    norm_const *= 1.01;
+}
 void Plane::zoomIn() {
     awidth *= 0.99;
     aheight *= 0.99;
@@ -80,7 +87,7 @@ void Plane::zoomOut() {
 
 void Plane::updateColors(double phi, double theta) {
     double* colors = get_colors(n, l, m, phi, theta,
-                            -awidth/2, awidth/2, -aheight/2, aheight/2, tileW, tileH);
+        -awidth/2, awidth/2, -aheight/2, aheight/2, tileW, tileH, norm_const);
     //double* colors = get_colors2_electric_boogaloo(n, l, m, phi, theta, -3e-9, 3e-9, -3e-9, 3e-9, 3e-9, tileW, tileH, 40);
 
     for ( int y = 0; y < tileH; y++ ) {

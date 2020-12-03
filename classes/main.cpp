@@ -209,6 +209,12 @@ int main()
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
             plane1.zoomOut();
         }
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+            plane1.incSensitivity();
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+            plane1.decSensitivity();
+        }
 
 
         // update state
