@@ -17,6 +17,10 @@ public:
     size_t verticesSize();
     size_t indicesSize();
 
+    int getn();
+    int getl();
+    int getm();
+
     void increment_n();
     void increment_l();
     void increment_m();

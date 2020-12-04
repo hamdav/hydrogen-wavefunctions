@@ -81,13 +81,15 @@ int main()
     }
     FT_Face face;
     if (FT_New_Face(ft, "fonts/cmunsi.ttf", 0, &face))
+
     {
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         return -1;
     }
+
     // Set the font width and height, 
     // width=0 means font calculates it
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, 20);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
@@ -249,6 +251,7 @@ int main()
 
     glfwSwapInterval(0);
 
+    std::string nmltext{"n=1, l=0, m=0"};
     double theta = 0;
     double phi = 0;
     bool nWasPressed = false;
@@ -319,6 +322,7 @@ int main()
 
 
         // update state
+        nmltext = "n=" + std::to_string(plane1.getn()) + ", l=" + std::to_string(plane1.getl()) + ", m=" + std::to_string(plane1.getm());
         plane1.updateColors(theta,phi);
         vertices = plane1.getVertices();
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -326,10 +330,10 @@ int main()
 
         // render
         // ------
-        glClearColor(0.4f, 0.4f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        RenderText(textShader, "This is sample text", 200.0f, 200.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f), textVAO, textVBO);
+
 
         // draw our first triangle
         mainShader.use();
@@ -339,9 +343,11 @@ int main()
         //mainShader.setFloat("alpha", 1.0);
         mainShader.setMat4("transform", trans);
 
+
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawElements(GL_TRIANGLES, plane1.indicesSize() / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
         glBindVertexArray(tVAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         tmpTrans = glm::translate(axesTrans, glm::vec3(1.2, 0.0, 0.0));
         tmpTrans = glm::rotate(tmpTrans, (float) phi, glm::vec3(1.0, 0.0, 0.0));
@@ -350,9 +356,14 @@ int main()
         mainShader.setFloat("alpha", 1);
         
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+        
+        // Should depth testing be disabled? I donno but it seems to work
+        glDisable(GL_DEPTH_TEST);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        RenderText(textShader, nmltext, static_cast<float>(SCR_WIDTH)/2, 360.0f, 0.5f, glm::vec3(1.0, 1.0f, 1.0f), textVAO, textVBO);
+        glEnable(GL_DEPTH_TEST);
 
 
 

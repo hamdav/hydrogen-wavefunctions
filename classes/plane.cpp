@@ -36,6 +36,15 @@ size_t Plane::indicesSize() {
     return indices.size() * sizeof(unsigned int);
 }
 
+int Plane::getn(){
+    return n;
+}
+int Plane::getl(){
+    return l;
+}
+int Plane::getm(){
+    return m;
+}
 void Plane::increment_n() {
     n++;
 }
