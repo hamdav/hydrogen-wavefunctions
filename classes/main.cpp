@@ -31,7 +31,7 @@ const unsigned int SCR_HEIGHT = 600;
 void RenderText(Shader &s, std::string text, float x, float y, float scale, glm::vec3 color, GLuint VAO, GLuint VBO);
 
 // Who doesn't like global variables
-/// Holds all state information relevant to a character as loaded using FreeType
+// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
     unsigned int TextureID; // ID handle of the glyph texture
     glm::ivec2   Size;      // Size of glyph
@@ -81,7 +81,6 @@ int main()
     }
     FT_Face face;
     if (FT_New_Face(ft, "fonts/cmunsi.ttf", 0, &face))
-
     {
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         return -1;
@@ -93,6 +92,7 @@ int main()
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
+    // Populate the characters map
     for (unsigned char c = 0; c < 128; c++)
     {
         // load character glyph
@@ -147,31 +147,31 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    float vertices1[] = {
+    // Create the axis coordinates
+    float axis_vertices[] = {
          0.0f,  0.0f, 0.0f,  1.0, 1.0f, 1.0f, // origin
-         0.5f,  0.0f, 0.0f,  1.0, 0.0f, 0.0f, // x
-         0.0f,  0.5f, 0.0f,  0.0, 1.0f, 0.0f, // y
-         0.0f,  0.0f, 0.5f,  0.0, 0.0f, 1.0f, // z
+         0.2f,  0.0f, 0.0f,  1.0, 0.0f, 0.0f, // x
+         0.0f,  0.2f, 0.0f,  0.0, 1.0f, 0.0f, // y
+         0.0f,  0.0f, 0.2f,  0.0, 0.0f, 1.0f, // z
     };
-    unsigned int indices1[] = {  // note that we start from 0!
-        0, 1, 2,  // x y
-        0, 1, 3,  // x z
-        0, 2, 3,  // y z
-        1, 2, 3,
+    unsigned int axis_indices[] = {  // note that we start from 0!
+        0, 1, 0,  // x
+        0, 2, 0,  // y
+        0, 3, 0,  // z
     };
 
-    unsigned int tVBO, tVAO, tEBO;
-    glGenVertexArrays(1, &tVAO);
-    glGenBuffers(1, &tVBO);
-    glGenBuffers(1, &tEBO);
+    unsigned int aVBO, aVAO, aEBO;
+    glGenVertexArrays(1, &aVAO);
+    glGenBuffers(1, &aVBO);
+    glGenBuffers(1, &aEBO);
 
-    glBindVertexArray(tVAO);
+    glBindVertexArray(aVAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, tVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, aVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(axis_vertices), axis_vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tEBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(axis_indices), axis_indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -179,23 +179,76 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    Plane plane1(0.7, 0.7, 150, 150);
-    float* vertices = plane1.getVertices();
-    unsigned int* indices = plane1.getIndices();
+    // Create indicator plane coordinates
+    //               G          
+    //     F ------------------ H
+    //       |       |        |
+    //       |       y        |
+    //     E |       Lx_______| A
+    //       |                |
+    //       |                |
+    //     D ------------------ B
+    //               C
+    float indicator_plane_vertices[] = {
+         0.0f,  0.0f, 0.0f,  1.0, 1.0f, 1.0f, // origin
+         0.2f,  0.0f, 0.0f,  1.0, 0.0f, 0.0f, // A
+         0.2f, -0.2f, 0.0f,  1.0, 1.0f, 1.0f, // B
+         0.0f, -0.2f, 0.0f,  1.0, 1.0f, 1.0f, // C
+        -0.2f, -0.2f, 0.0f,  1.0, 1.0f, 1.0f, // D
+        -0.2f,  0.0f, 0.0f,  1.0, 1.0f, 1.0f, // E
+        -0.2f,  0.2f, 0.0f,  1.0, 1.0f, 1.0f, // F
+         0.0f,  0.2f, 0.0f,  0.0, 1.0f, 0.0f, // G
+         0.2f,  0.2f, 0.0f,  1.0, 1.0f, 1.0f, // H
+    };
+    unsigned int indicator_plane_indices[] = {  // note that we start from 0!
+        0, 1, 2, //OAB
+        0, 2, 3, //OBC
+        0, 3, 4, //OCD
+        0, 4, 5, //ODE
+        0, 5, 6, //OEF
+        0, 6, 7, //OFG
+        0, 7, 8, //OGH
+        0, 8, 1, //OHA
+    };
 
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    unsigned int ipVBO, ipVAO, ipEBO;
+    glGenVertexArrays(1, &ipVAO);
+    glGenBuffers(1, &ipVBO);
+    glGenBuffers(1, &ipEBO);
+
+    glBindVertexArray(ipVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, ipVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(indicator_plane_vertices), indicator_plane_vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ipEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicator_plane_indices), indicator_plane_indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+
+    // Create the plane with the wavefunction image
+    Plane plane1(0.7, 0.7, 150, 150);
+    float* plane_vertices = plane1.getVertices();
+    unsigned int* plane_indices = plane1.getIndices();
+
+    unsigned int pVBO, pVAO, pEBO;
+    glGenVertexArrays(1, &pVAO);
+    glGenBuffers(1, &pVBO);
+    glGenBuffers(1, &pEBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(pVAO);
 
     std::cout << "Size of vertices: "<< plane1.verticesSize() << "\nSize of indices: " << plane1.indicesSize() << std::endl;
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, pVBO);
+    glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), plane_vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, plane1.indicesSize(), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, plane1.indicesSize(), plane_indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -227,14 +280,16 @@ int main()
     glBindVertexArray(0);
 
 
-    // uncomment this call to draw in wireframe polygons.
-
     float timeValue, greenValue;
     int vertexColorLocation;
 
     glm::mat4 trans(1.0f);
-    glm::mat4 axesTrans(1.0f);
+    glm::mat4 axesTrans(1.0f); // Trans(late) or Trans(form)??? Both it seems???
     axesTrans = glm::scale(axesTrans, glm::vec3(0.5, 0.5, 0.5));
+    axesTrans = glm::translate(axesTrans, glm::vec3(1.2, 0.0, 0.0));
+    axesTrans = glm::rotate(axesTrans, 0.3f, glm::vec3(1, 0, 0));
+    axesTrans = glm::rotate(axesTrans, -0.3f, glm::vec3(0, 1, 0));
+    axesTrans = glm::rotate(axesTrans, -2.094f, glm::vec3(1, 1, 1));
     glm::mat4 tmpTrans;
 
 
@@ -324,9 +379,9 @@ int main()
         // update state
         nmltext = "n=" + std::to_string(plane1.getn()) + ", l=" + std::to_string(plane1.getl()) + ", m=" + std::to_string(plane1.getm());
         plane1.updateColors(theta,phi);
-        vertices = plane1.getVertices();
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), vertices, GL_STATIC_DRAW);
+        plane_vertices = plane1.getVertices();
+        glBindBuffer(GL_ARRAY_BUFFER, pVBO);
+        glBufferData(GL_ARRAY_BUFFER, plane1.verticesSize(), plane_vertices, GL_STATIC_DRAW);
 
         // render
         // ------
@@ -340,24 +395,27 @@ int main()
 
         timeValue = glfwGetTime();
         greenValue = (sin(timeValue));
-        //mainShader.setFloat("alpha", 1.0);
+        mainShader.setFloat("alpha", 1.0);
         mainShader.setMat4("transform", trans);
 
 
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        glBindVertexArray(pVAO); 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawElements(GL_TRIANGLES, plane1.indicesSize() / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
-        glBindVertexArray(tVAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        tmpTrans = glm::translate(axesTrans, glm::vec3(1.2, 0.0, 0.0));
-        tmpTrans = glm::rotate(tmpTrans, (float) phi, glm::vec3(1.0, 0.0, 0.0));
-        tmpTrans = glm::rotate(tmpTrans, (float) -theta, glm::vec3(0.0, 0.0, 1.0));
+        glBindVertexArray(ipVAO); 
+        tmpTrans = glm::rotate(axesTrans, (float) theta, glm::vec3(0.0, 0.0, 1.0));
+        tmpTrans = glm::rotate(tmpTrans, (float) -phi, glm::vec3(0.0, 1.0, 0.0));
         mainShader.setMat4("transform", tmpTrans);
         mainShader.setFloat("alpha", 1);
         
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
+        glBindVertexArray(aVAO); 
+        mainShader.setMat4("transform", axesTrans);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
         
         // Should depth testing be disabled? I donno but it seems to work
         glDisable(GL_DEPTH_TEST);
@@ -366,10 +424,6 @@ int main()
         glEnable(GL_DEPTH_TEST);
 
 
-
-        // glBindVertexArray(0); // no need to unbind it every time 
-        //
- 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -386,9 +440,9 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &pVAO);
+    glDeleteBuffers(1, &pVBO);
+    glDeleteBuffers(1, &pEBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
